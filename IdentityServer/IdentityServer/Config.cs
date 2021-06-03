@@ -17,14 +17,6 @@ namespace IdentityServer
         {
             get
             {
-                var address = new
-                {
-                    street_address = "One Hacker Way",
-                    locality = "Heidelberg",
-                    postal_code = 69118,
-                    country = "Germany"
-                };
-
                 return new List<TestUser>
                 {
                     new TestUser
@@ -34,14 +26,8 @@ namespace IdentityServer
                         Password = "alice",
                         Claims =
                         {
-                            new Claim(JwtClaimTypes.Name, "Alice Smith"),
-                            new Claim(JwtClaimTypes.GivenName, "Alice"),
-                            new Claim(JwtClaimTypes.FamilyName, "Smith"),
                             new Claim(JwtClaimTypes.Email, "AliceSmith@email.com"),
-                            new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
                             new Claim(JwtClaimTypes.Role, "admin"),
-                            new Claim(JwtClaimTypes.WebSite, "http://alice.com"),
-                            new Claim(JwtClaimTypes.Address, JsonSerializer.Serialize(address), IdentityServerConstants.ClaimValueTypes.Json)
                         }
                     },
                     new TestUser
@@ -51,14 +37,8 @@ namespace IdentityServer
                         Password = "bob",
                         Claims =
                         {
-                            new Claim(JwtClaimTypes.Name, "Bob Smith"),
-                            new Claim(JwtClaimTypes.GivenName, "Bob"),
-                            new Claim(JwtClaimTypes.FamilyName, "Smith"),
                             new Claim(JwtClaimTypes.Email, "BobSmith@email.com"),
-                            new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
                             new Claim(JwtClaimTypes.Role, "user"),
-                            new Claim(JwtClaimTypes.WebSite, "http://bob.com"),
-                            new Claim(JwtClaimTypes.Address, JsonSerializer.Serialize(address), IdentityServerConstants.ClaimValueTypes.Json)
                         }
                     }
                 };
@@ -100,30 +80,38 @@ namespace IdentityServer
             {
                 new Client
                 {
-                    ClientId = "m2m.client",
-                    ClientName = "Client Credentials Client",
-
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    ClientSecrets = {new Secret("SuperSecretPassword".Sha256())},
-
-                    AllowedScopes = { "restAPI.read", "restAPI.write" }
-                },
-
-                new Client
-                {
-                    ClientId = "interactive",
-                    ClientSecrets = {new Secret("SuperSecretPassword".Sha256())},
+                    ClientId = "interactive1",
+                    ClientSecrets = {new Secret("SuperSecretPassword1".Sha256())},
                     
                     AllowedGrantTypes = GrantTypes.Implicit,
-                    RequireClientSecret = false,
 
-                    RedirectUris = {"http://localhost:4200"},
-                    FrontChannelLogoutUri = "http://localhost:4200",
-                    PostLogoutRedirectUris = {"http://localhost:4200"},
+                    RedirectUris = {"http://localhost:4200/home"},
+                    FrontChannelLogoutUri = "http://localhost:4200/home",
+                    PostLogoutRedirectUris = {"http://localhost:4200/home"},
                     AllowedCorsOrigins = {"http://localhost:4200"},
                     
                     AllowOfflineAccess = true,
                     AllowedScopes = {"openid", "profile", "restAPI.read"},
+                    RequirePkce = true,
+                    RequireConsent = true,
+                    AllowPlainTextPkce = false,
+                    AllowAccessTokensViaBrowser = true,
+                },
+
+                new Client
+                {
+                    ClientId = "interactive2",
+                    ClientSecrets = {new Secret("SuperSecretPassword2".Sha256())},
+
+                    AllowedGrantTypes = GrantTypes.Implicit,
+
+                    RedirectUris = {"http://localhost:59650/home"},
+                    FrontChannelLogoutUri = "http://localhost:59650/home",
+                    PostLogoutRedirectUris = {"http://localhost:59650/home"},
+                    AllowedCorsOrigins = {"http://localhost:59650"},
+
+                    AllowOfflineAccess = true,
+                    AllowedScopes = {"openid", "profile", "restAPI.write"},
                     RequirePkce = true,
                     RequireConsent = true,
                     AllowPlainTextPkce = false,
